@@ -14,8 +14,11 @@ NDK_PATH="$HOME/Library/Android/sdk/ndk/$NDK_VERSION"
 TOOLCHAIN_PATH="$NDK_PATH/toolchains/llvm/prebuilt/darwin-x86_64"
 PROTOC_PATH="/opt/homebrew/bin/protoc"
 
-# Output directory for jniLibs
-JNILIBS_DIR="$SCRIPT_DIR/demo/src/main/jniLibs"
+# Output directories for jniLibs
+# - Library module (for JitPack publishing)
+LIBRARY_JNILIBS_DIR="$SCRIPT_DIR/actr-kotlin/src/main/jniLibs"
+# - Demo app (for local development)
+DEMO_JNILIBS_DIR="$SCRIPT_DIR/demo/src/main/jniLibs"
 
 # Check if libactr submodule exists
 if [ ! -d "$LIBACTR_DIR" ]; then
@@ -64,7 +67,8 @@ echo "Building ACTR Android Native Libraries"
 echo "========================================"
 echo ""
 echo "Source: $LIBACTR_DIR"
-echo "Output: $JNILIBS_DIR"
+echo "Output (library): $LIBRARY_JNILIBS_DIR"
+echo "Output (demo): $DEMO_JNILIBS_DIR"
 echo ""
 
 echo "Building for aarch64-linux-android..."
@@ -75,20 +79,25 @@ echo "Building for x86_64-linux-android..."
 cargo build --release --target x86_64-linux-android
 
 # Create output directories
-mkdir -p "$JNILIBS_DIR/arm64-v8a" "$JNILIBS_DIR/x86_64"
+mkdir -p "$LIBRARY_JNILIBS_DIR/arm64-v8a" "$LIBRARY_JNILIBS_DIR/x86_64"
+mkdir -p "$DEMO_JNILIBS_DIR/arm64-v8a" "$DEMO_JNILIBS_DIR/x86_64"
 
 echo ""
 echo "Copying native libraries..."
-cp "$LIBACTR_DIR/target/aarch64-linux-android/release/libactr.so" "$JNILIBS_DIR/arm64-v8a/"
-cp "$LIBACTR_DIR/target/x86_64-linux-android/release/libactr.so" "$JNILIBS_DIR/x86_64/"
+# Copy to library module (for JitPack publishing)
+cp "$LIBACTR_DIR/target/aarch64-linux-android/release/libactr.so" "$LIBRARY_JNILIBS_DIR/arm64-v8a/"
+cp "$LIBACTR_DIR/target/x86_64-linux-android/release/libactr.so" "$LIBRARY_JNILIBS_DIR/x86_64/"
+# Copy to demo app (for local development)
+cp "$LIBACTR_DIR/target/aarch64-linux-android/release/libactr.so" "$DEMO_JNILIBS_DIR/arm64-v8a/"
+cp "$LIBACTR_DIR/target/x86_64-linux-android/release/libactr.so" "$DEMO_JNILIBS_DIR/x86_64/"
 
 echo ""
 echo "========================================"
 echo "Build completed successfully!"
 echo "========================================"
 echo ""
-echo "Library sizes:"
-ls -lh "$JNILIBS_DIR"/*/*.so
+echo "Library sizes (library module):"
+ls -lh "$LIBRARY_JNILIBS_DIR"/*/*.so
 
 echo ""
 echo "Next steps:"
