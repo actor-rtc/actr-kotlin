@@ -18,7 +18,7 @@ ACTR Kotlin provides seamless integration between the ACTR framework and Android
 ```
 actr-kotlin/
 ├── actr-kotlin/              # 📚 ACTR Kotlin Library Module
-│   ├── src/main/kotlin/io/actorrtc/actr/
+│   ├── src/main/kotlin/io/actor_rtc/actr/
 │   │   ├── ActrClient.kt     # Main client API
 │   │   ├── Types.kt          # Core types (ActrId, ActrType, etc.)
 │   │   └── generated/        # Auto-generated code from UniFFI
@@ -30,8 +30,12 @@ actr-kotlin/
 │   │   ├── ServerActivity.kt # Server demo
 │   │   └── EchoIntegrationTest.kt # Integration tests
 │   └── src/androidTest/      # Android instrumentation tests
+├── libactr/                  # 🦀 Rust FFI Library (git submodule)
+│   ├── Cargo.toml           # Rust dependencies
+│   └── src/                 # UniFFI binding source
 ├── proto/                    # 🔧 Protocol Buffer Definitions
 │   └── local_file.proto      # File transfer service
+├── build-android.sh          # 📦 Native library build script
 └── build.gradle.kts          # Root build configuration
 ```
 
@@ -55,11 +59,27 @@ actr-kotlin/
 ### 1. Clone and Setup
 
 ```bash
-git clone <repository-url>
+# Clone with submodules
+git clone --recursive <repository-url>
 cd actr-kotlin
+
+# Or if already cloned, initialize submodules
+git submodule update --init --recursive
 ```
 
-### 2. Build the Project
+### 2. Build Native Libraries
+
+```bash
+# Build Rust native libraries for Android (requires Android NDK)
+./build-android.sh
+
+# This will:
+# - Build libactr for aarch64-linux-android (arm64-v8a)
+# - Build libactr for x86_64-linux-android (x86_64)
+# - Copy .so files to demo/src/main/jniLibs/
+```
+
+### 3. Build the Project
 
 ```bash
 # Build everything
@@ -72,7 +92,7 @@ cd actr-kotlin
 ./gradlew :demo:assembleDebug
 ```
 
-### 3. Run Tests
+### 4. Run Tests
 
 ```bash
 # Run unit tests
@@ -293,6 +313,7 @@ Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for detai
 ## 🔗 Related Projects
 
 - [ACTR Framework](https://github.com/actor-rtc/actr) - Core Rust implementation
+- [libactr](https://github.com/actor-rtc/libactr) - Rust FFI library (included as submodule)
 - [ACTR Examples](https://github.com/actor-rtc/actr-examples) - Usage examples
 - [ACTR CLI](https://github.com/actor-rtc/actr-cli) - Code generation tools
 
