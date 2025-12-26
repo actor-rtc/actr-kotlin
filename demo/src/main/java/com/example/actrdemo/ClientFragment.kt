@@ -264,9 +264,10 @@ class ClientFragment : Fragment() {
                 val requestPayload = encodeEchoRequest(message)
                 val responsePayload =
                         echoClientRef!!.call(
-                                echoServerId!!,
                                 "echo.EchoService.Echo",
-                                requestPayload
+                                PayloadType.RPC_RELIABLE,
+                                requestPayload,
+                                30000L
                         )
                 val response = decodeEchoResponse(responsePayload)
                 appendLog("📥 Response: \"$response\"")
@@ -328,11 +329,9 @@ class ClientFragment : Fragment() {
                 // Call SendFile RPC on self to trigger the file transfer
                 appendLog("📞 Calling SendFile via ActrRef.call()...")
                 val request = SendFileRequest.newBuilder().setFilename("user-input.txt").build()
-                val selfId = fileTransferRef!!.actorId()
 
                 val responsePayload =
                         fileTransferRef!!.call(
-                                selfId,
                                 "local_file.LocalFileService.SendFile",
                                 PayloadType.RPC_RELIABLE,
                                 request.toByteArray(),

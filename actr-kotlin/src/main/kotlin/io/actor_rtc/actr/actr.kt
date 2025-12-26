@@ -619,39 +619,33 @@ internal interface UniffiForeignFutureCompleteVoid : com.sun.jna.Callback {
     fun callback(`callbackData`: Long,`result`: UniffiForeignFutureResultVoid.UniffiByValue,)
 }
 internal interface UniffiCallbackInterfaceWorkloadBridgeMethod0 : com.sun.jna.Callback {
-    fun callback(`uniffiHandle`: Long,`uniffiFutureCallback`: UniffiForeignFutureCompleteRustBuffer,`uniffiCallbackData`: Long,`uniffiOutDroppedCallback`: UniffiForeignFutureDroppedCallbackStruct,)
+    fun callback(`uniffiHandle`: Long,`ctx`: Long,`uniffiFutureCallback`: UniffiForeignFutureCompleteVoid,`uniffiCallbackData`: Long,`uniffiOutDroppedCallback`: UniffiForeignFutureDroppedCallbackStruct,)
 }
 internal interface UniffiCallbackInterfaceWorkloadBridgeMethod1 : com.sun.jna.Callback {
     fun callback(`uniffiHandle`: Long,`ctx`: Long,`uniffiFutureCallback`: UniffiForeignFutureCompleteVoid,`uniffiCallbackData`: Long,`uniffiOutDroppedCallback`: UniffiForeignFutureDroppedCallbackStruct,)
 }
 internal interface UniffiCallbackInterfaceWorkloadBridgeMethod2 : com.sun.jna.Callback {
-    fun callback(`uniffiHandle`: Long,`ctx`: Long,`uniffiFutureCallback`: UniffiForeignFutureCompleteVoid,`uniffiCallbackData`: Long,`uniffiOutDroppedCallback`: UniffiForeignFutureDroppedCallbackStruct,)
-}
-internal interface UniffiCallbackInterfaceWorkloadBridgeMethod3 : com.sun.jna.Callback {
     fun callback(`uniffiHandle`: Long,`ctx`: Long,`envelope`: RustBuffer.ByValue,`uniffiFutureCallback`: UniffiForeignFutureCompleteRustBuffer,`uniffiCallbackData`: Long,`uniffiOutDroppedCallback`: UniffiForeignFutureDroppedCallbackStruct,)
 }
-@Structure.FieldOrder("uniffiFree", "uniffiClone", "serverId", "onStart", "onStop", "dispatch")
+@Structure.FieldOrder("uniffiFree", "uniffiClone", "onStart", "onStop", "dispatch")
 internal open class UniffiVTableCallbackInterfaceWorkloadBridge(
     @JvmField internal var `uniffiFree`: UniffiCallbackInterfaceFree? = null,
     @JvmField internal var `uniffiClone`: UniffiCallbackInterfaceClone? = null,
-    @JvmField internal var `serverId`: UniffiCallbackInterfaceWorkloadBridgeMethod0? = null,
-    @JvmField internal var `onStart`: UniffiCallbackInterfaceWorkloadBridgeMethod1? = null,
-    @JvmField internal var `onStop`: UniffiCallbackInterfaceWorkloadBridgeMethod2? = null,
-    @JvmField internal var `dispatch`: UniffiCallbackInterfaceWorkloadBridgeMethod3? = null,
+    @JvmField internal var `onStart`: UniffiCallbackInterfaceWorkloadBridgeMethod0? = null,
+    @JvmField internal var `onStop`: UniffiCallbackInterfaceWorkloadBridgeMethod1? = null,
+    @JvmField internal var `dispatch`: UniffiCallbackInterfaceWorkloadBridgeMethod2? = null,
 ) : Structure() {
     class UniffiByValue(
         `uniffiFree`: UniffiCallbackInterfaceFree? = null,
         `uniffiClone`: UniffiCallbackInterfaceClone? = null,
-        `serverId`: UniffiCallbackInterfaceWorkloadBridgeMethod0? = null,
-        `onStart`: UniffiCallbackInterfaceWorkloadBridgeMethod1? = null,
-        `onStop`: UniffiCallbackInterfaceWorkloadBridgeMethod2? = null,
-        `dispatch`: UniffiCallbackInterfaceWorkloadBridgeMethod3? = null,
-    ): UniffiVTableCallbackInterfaceWorkloadBridge(`uniffiFree`,`uniffiClone`,`serverId`,`onStart`,`onStop`,`dispatch`,), Structure.ByValue
+        `onStart`: UniffiCallbackInterfaceWorkloadBridgeMethod0? = null,
+        `onStop`: UniffiCallbackInterfaceWorkloadBridgeMethod1? = null,
+        `dispatch`: UniffiCallbackInterfaceWorkloadBridgeMethod2? = null,
+    ): UniffiVTableCallbackInterfaceWorkloadBridge(`uniffiFree`,`uniffiClone`,`onStart`,`onStop`,`dispatch`,), Structure.ByValue
 
    internal fun uniffiSetValue(other: UniffiVTableCallbackInterfaceWorkloadBridge) {
         `uniffiFree` = other.`uniffiFree`
         `uniffiClone` = other.`uniffiClone`
-        `serverId` = other.`serverId`
         `onStart` = other.`onStart`
         `onStop` = other.`onStop`
         `dispatch` = other.`dispatch`
@@ -709,8 +703,6 @@ internal object IntegrityCheckingUniffiLib {
     ): Short
     external fun uniffi_actr_checksum_constructor_actrsystemwrapper_new_from_file(
     ): Short
-    external fun uniffi_actr_checksum_method_workloadbridge_server_id(
-    ): Short
     external fun uniffi_actr_checksum_method_workloadbridge_on_start(
     ): Short
     external fun uniffi_actr_checksum_method_workloadbridge_on_stop(
@@ -748,7 +740,7 @@ internal object UniffiLib {
     ): Unit
     external fun uniffi_actr_fn_method_actrrefwrapper_actor_id(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
-    external fun uniffi_actr_fn_method_actrrefwrapper_call(`ptr`: Long,`target`: RustBuffer.ByValue,`routeKey`: RustBuffer.ByValue,`payloadType`: RustBuffer.ByValue,`requestPayload`: RustBuffer.ByValue,`timeoutMs`: Long,
+    external fun uniffi_actr_fn_method_actrrefwrapper_call(`ptr`: Long,`routeKey`: RustBuffer.ByValue,`payloadType`: RustBuffer.ByValue,`requestPayload`: RustBuffer.ByValue,`timeoutMs`: Long,
     ): Long
     external fun uniffi_actr_fn_method_actrrefwrapper_discover(`ptr`: Long,`targetType`: RustBuffer.ByValue,`count`: Int,
     ): Long
@@ -756,7 +748,7 @@ internal object UniffiLib {
     ): Byte
     external fun uniffi_actr_fn_method_actrrefwrapper_shutdown(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
     ): Unit
-    external fun uniffi_actr_fn_method_actrrefwrapper_tell(`ptr`: Long,`target`: RustBuffer.ByValue,`routeKey`: RustBuffer.ByValue,`payloadType`: RustBuffer.ByValue,`messagePayload`: RustBuffer.ByValue,
+    external fun uniffi_actr_fn_method_actrrefwrapper_tell(`ptr`: Long,`routeKey`: RustBuffer.ByValue,`payloadType`: RustBuffer.ByValue,`messagePayload`: RustBuffer.ByValue,
     ): Long
     external fun uniffi_actr_fn_method_actrrefwrapper_wait_for_shutdown(`ptr`: Long,
     ): Long
@@ -911,7 +903,7 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
     if (lib.uniffi_actr_checksum_method_actrrefwrapper_actor_id() != 11168.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_actr_checksum_method_actrrefwrapper_call() != 64735.toShort()) {
+    if (lib.uniffi_actr_checksum_method_actrrefwrapper_call() != 33532.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_actr_checksum_method_actrrefwrapper_discover() != 12987.toShort()) {
@@ -923,7 +915,7 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
     if (lib.uniffi_actr_checksum_method_actrrefwrapper_shutdown() != 4843.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_actr_checksum_method_actrrefwrapper_tell() != 58229.toShort()) {
+    if (lib.uniffi_actr_checksum_method_actrrefwrapper_tell() != 45287.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_actr_checksum_method_actrrefwrapper_wait_for_shutdown() != 6547.toShort()) {
@@ -947,16 +939,13 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
     if (lib.uniffi_actr_checksum_constructor_actrsystemwrapper_new_from_file() != 63620.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_actr_checksum_method_workloadbridge_server_id() != 20059.toShort()) {
+    if (lib.uniffi_actr_checksum_method_workloadbridge_on_start() != 1270.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_actr_checksum_method_workloadbridge_on_start() != 23404.toShort()) {
+    if (lib.uniffi_actr_checksum_method_workloadbridge_on_stop() != 37751.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_actr_checksum_method_workloadbridge_on_stop() != 60369.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_actr_checksum_method_workloadbridge_dispatch() != 16706.toShort()) {
+    if (lib.uniffi_actr_checksum_method_workloadbridge_dispatch() != 59525.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -1823,7 +1812,7 @@ public interface ActrRefWrapperInterface {
      * # Returns
      * Response payload bytes (protobuf encoded)
      */
-    suspend fun `call`(`target`: ActrId, `routeKey`: kotlin.String, `payloadType`: PayloadType, `requestPayload`: kotlin.ByteArray, `timeoutMs`: kotlin.Long): kotlin.ByteArray
+    suspend fun `call`(`routeKey`: kotlin.String, `payloadType`: PayloadType, `requestPayload`: kotlin.ByteArray, `timeoutMs`: kotlin.Long): kotlin.ByteArray
     
     /**
      * Discover actors of the specified type
@@ -1844,12 +1833,11 @@ public interface ActrRefWrapperInterface {
      * Send a one-way message to an actor (fire-and-forget)
      *
      * # Arguments
-     * - `target`: Target actor ID
      * - `route_key`: RPC route key (e.g., "echo.EchoService/Echo")
      * - `payload_type`: Payload transmission type (RpcReliable, RpcSignal, etc.)
      * - `message_payload`: Message payload bytes (protobuf encoded)
      */
-    suspend fun `tell`(`target`: ActrId, `routeKey`: kotlin.String, `payloadType`: PayloadType, `messagePayload`: kotlin.ByteArray)
+    suspend fun `tell`(`routeKey`: kotlin.String, `payloadType`: PayloadType, `messagePayload`: kotlin.ByteArray)
     
     /**
      * Wait for shutdown to complete
@@ -1992,12 +1980,12 @@ open class ActrRefWrapper: Disposable, AutoCloseable, ActrRefWrapperInterface
      */
     @Throws(ActrException::class)
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
-    override suspend fun `call`(`target`: ActrId, `routeKey`: kotlin.String, `payloadType`: PayloadType, `requestPayload`: kotlin.ByteArray, `timeoutMs`: kotlin.Long) : kotlin.ByteArray {
+    override suspend fun `call`(`routeKey`: kotlin.String, `payloadType`: PayloadType, `requestPayload`: kotlin.ByteArray, `timeoutMs`: kotlin.Long) : kotlin.ByteArray {
         return uniffiRustCallAsync(
         callWithHandle { uniffiHandle ->
             UniffiLib.uniffi_actr_fn_method_actrrefwrapper_call(
                 uniffiHandle,
-                FfiConverterTypeActrId.lower(`target`),FfiConverterString.lower(`routeKey`),FfiConverterTypePayloadType.lower(`payloadType`),FfiConverterByteArray.lower(`requestPayload`),FfiConverterLong.lower(`timeoutMs`),
+                FfiConverterString.lower(`routeKey`),FfiConverterTypePayloadType.lower(`payloadType`),FfiConverterByteArray.lower(`requestPayload`),FfiConverterLong.lower(`timeoutMs`),
             )
         },
         { future, callback, continuation -> UniffiLib.ffi_actr_rust_future_poll_rust_buffer(future, callback, continuation) },
@@ -2070,19 +2058,18 @@ open class ActrRefWrapper: Disposable, AutoCloseable, ActrRefWrapperInterface
      * Send a one-way message to an actor (fire-and-forget)
      *
      * # Arguments
-     * - `target`: Target actor ID
      * - `route_key`: RPC route key (e.g., "echo.EchoService/Echo")
      * - `payload_type`: Payload transmission type (RpcReliable, RpcSignal, etc.)
      * - `message_payload`: Message payload bytes (protobuf encoded)
      */
     @Throws(ActrException::class)
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
-    override suspend fun `tell`(`target`: ActrId, `routeKey`: kotlin.String, `payloadType`: PayloadType, `messagePayload`: kotlin.ByteArray) {
+    override suspend fun `tell`(`routeKey`: kotlin.String, `payloadType`: PayloadType, `messagePayload`: kotlin.ByteArray) {
         return uniffiRustCallAsync(
         callWithHandle { uniffiHandle ->
             UniffiLib.uniffi_actr_fn_method_actrrefwrapper_tell(
                 uniffiHandle,
-                FfiConverterTypeActrId.lower(`target`),FfiConverterString.lower(`routeKey`),FfiConverterTypePayloadType.lower(`payloadType`),FfiConverterByteArray.lower(`messagePayload`),
+                FfiConverterString.lower(`routeKey`),FfiConverterTypePayloadType.lower(`payloadType`),FfiConverterByteArray.lower(`messagePayload`),
             )
         },
         { future, callback, continuation -> UniffiLib.ffi_actr_rust_future_poll_void(future, callback, continuation) },
@@ -3616,13 +3603,6 @@ public object FfiConverterTypePayloadType: FfiConverterRustBuffer<PayloadType> {
 public interface WorkloadBridge {
     
     /**
-     * Get the server ID for this workload
-     *
-     * This identifies the workload's actor identity.
-     */
-    suspend fun `serverId`(): ActrId
-    
-    /**
      * Lifecycle hook called when the workload starts
      */
     suspend fun `onStart`(`ctx`: ContextBridge)
@@ -3649,23 +3629,7 @@ public interface WorkloadBridge {
      *
      * # Returns
      * - Response bytes (protobuf encoded)
-     *
-     * # Example (Kotlin)
-     * ```kotlin
-     * override suspend fun dispatch(ctx: ContextBridge, envelope: RpcEnvelopeBridge): ByteArray {
-     * Log.i(TAG, "Received request: route_key=${envelope.routeKey}")
-     *
-     * // Forward to remote server using ctx.callRaw
-     * val response = ctx.callRaw(
-     * serverId,
-     * envelope.routeKey,
-     * PayloadType.RPC_RELIABLE,
-     * envelope.payload,
-     * 30000L
-     * )
-     * return response
-     * }
-     * ```
+
      */
     suspend fun `dispatch`(`ctx`: ContextBridge, `envelope`: RpcEnvelopeBridge): kotlin.ByteArray
     
@@ -3676,39 +3640,7 @@ public interface WorkloadBridge {
 
 // Put the implementation in an object so we don't pollute the top-level namespace
 internal object uniffiCallbackInterfaceWorkloadBridge {
-    internal object `serverId`: UniffiCallbackInterfaceWorkloadBridgeMethod0 {
-        override fun callback(`uniffiHandle`: Long,`uniffiFutureCallback`: UniffiForeignFutureCompleteRustBuffer,`uniffiCallbackData`: Long,`uniffiOutDroppedCallback`: UniffiForeignFutureDroppedCallbackStruct,) {
-            val uniffiObj = FfiConverterTypeWorkloadBridge.handleMap.get(uniffiHandle)
-            val makeCall = suspend { ->
-                uniffiObj.`serverId`(
-                )
-            }
-            val uniffiHandleSuccess = { returnValue: ActrId ->
-                val uniffiResult = UniffiForeignFutureResultRustBuffer.UniffiByValue(
-                    FfiConverterTypeActrId.lower(returnValue),
-                    UniffiRustCallStatus.ByValue()
-                )
-                uniffiResult.write()
-                uniffiFutureCallback.callback(uniffiCallbackData, uniffiResult)
-            }
-            val uniffiHandleError = { callStatus: UniffiRustCallStatus.ByValue ->
-                uniffiFutureCallback.callback(
-                    uniffiCallbackData,
-                    UniffiForeignFutureResultRustBuffer.UniffiByValue(
-                        RustBuffer.ByValue(),
-                        callStatus,
-                    ),
-                )
-            }
-            uniffiTraitInterfaceCallAsync(
-                makeCall,
-                uniffiHandleSuccess,
-                uniffiHandleError,
-                uniffiOutDroppedCallback
-            )
-        }
-    }
-    internal object `onStart`: UniffiCallbackInterfaceWorkloadBridgeMethod1 {
+    internal object `onStart`: UniffiCallbackInterfaceWorkloadBridgeMethod0 {
         override fun callback(`uniffiHandle`: Long,`ctx`: Long,`uniffiFutureCallback`: UniffiForeignFutureCompleteVoid,`uniffiCallbackData`: Long,`uniffiOutDroppedCallback`: UniffiForeignFutureDroppedCallbackStruct,) {
             val uniffiObj = FfiConverterTypeWorkloadBridge.handleMap.get(uniffiHandle)
             val makeCall = suspend { ->
@@ -3740,7 +3672,7 @@ internal object uniffiCallbackInterfaceWorkloadBridge {
             )
         }
     }
-    internal object `onStop`: UniffiCallbackInterfaceWorkloadBridgeMethod2 {
+    internal object `onStop`: UniffiCallbackInterfaceWorkloadBridgeMethod1 {
         override fun callback(`uniffiHandle`: Long,`ctx`: Long,`uniffiFutureCallback`: UniffiForeignFutureCompleteVoid,`uniffiCallbackData`: Long,`uniffiOutDroppedCallback`: UniffiForeignFutureDroppedCallbackStruct,) {
             val uniffiObj = FfiConverterTypeWorkloadBridge.handleMap.get(uniffiHandle)
             val makeCall = suspend { ->
@@ -3772,7 +3704,7 @@ internal object uniffiCallbackInterfaceWorkloadBridge {
             )
         }
     }
-    internal object `dispatch`: UniffiCallbackInterfaceWorkloadBridgeMethod3 {
+    internal object `dispatch`: UniffiCallbackInterfaceWorkloadBridgeMethod2 {
         override fun callback(`uniffiHandle`: Long,`ctx`: Long,`envelope`: RustBuffer.ByValue,`uniffiFutureCallback`: UniffiForeignFutureCompleteRustBuffer,`uniffiCallbackData`: Long,`uniffiOutDroppedCallback`: UniffiForeignFutureDroppedCallbackStruct,) {
             val uniffiObj = FfiConverterTypeWorkloadBridge.handleMap.get(uniffiHandle)
             val makeCall = suspend { ->
@@ -3823,7 +3755,6 @@ internal object uniffiCallbackInterfaceWorkloadBridge {
     internal var vtable = UniffiVTableCallbackInterfaceWorkloadBridge.UniffiByValue(
         uniffiFree,
         uniffiClone,
-        `serverId`,
         `onStart`,
         `onStop`,
         `dispatch`,

@@ -10,38 +10,42 @@ import io.actor_rtc.actr.PayloadType
 // ============================================================================
 
 /**
- * Call a remote actor via RPC with default PayloadType.RPC_RELIABLE and 30s timeout.
+ * Call via RPC proxy with default PayloadType.RPC_RELIABLE and 30s timeout.
+ *
+ * This sends a request through the local workload's RPC proxy mechanism.
+ * The workload's dispatch() method handles routing to the remote actor.
  *
  * Example:
  * ```kotlin
- * val response = ref.call(targetId, "echo.EchoService.Echo", requestPayload)
+ * val response = ref.call("echo.EchoService.Echo", requestPayload)
  * ```
  */
 suspend fun ActrRef.call(
-        target: ActrId,
         routeKey: String,
         requestPayload: ByteArray,
         payloadType: PayloadType = PayloadType.RPC_RELIABLE,
         timeoutMs: Long = 30000L
 ): ByteArray {
-    return call(target, routeKey, payloadType, requestPayload, timeoutMs)
+    return call(routeKey, payloadType, requestPayload, timeoutMs)
 }
 
 /**
- * Send a one-way message to an actor with default PayloadType.RPC_RELIABLE.
+ * Send a one-way message via RPC proxy with default PayloadType.RPC_RELIABLE.
+ *
+ * This sends a message through the local workload's RPC proxy mechanism.
+ * The workload's dispatch() method handles routing to the remote actor.
  *
  * Example:
  * ```kotlin
- * ref.tell(targetId, "echo.EchoService.Notify", messagePayload)
+ * ref.tell("echo.EchoService.Notify", messagePayload)
  * ```
  */
 suspend fun ActrRef.tell(
-        target: ActrId,
         routeKey: String,
         messagePayload: ByteArray,
         payloadType: PayloadType = PayloadType.RPC_RELIABLE
 ) {
-    tell(target, routeKey, payloadType, messagePayload)
+    tell(routeKey, payloadType, messagePayload)
 }
 
 // ============================================================================
@@ -53,7 +57,7 @@ suspend fun ActrRef.tell(
  *
  * Example:
  * ```kotlin
- * val result = ref.callCatching(target, "echo.EchoService.Echo", payload)
+ * val result = ref.callCatching("echo.EchoService.Echo", payload)
  * result.onSuccess { response ->
  *     println("Got response: $response")
  * }.onFailure { error ->
@@ -62,13 +66,12 @@ suspend fun ActrRef.tell(
  * ```
  */
 suspend fun ActrRef.callCatching(
-        target: ActrId,
         routeKey: String,
         requestPayload: ByteArray,
         payloadType: PayloadType = PayloadType.RPC_RELIABLE,
         timeoutMs: Long = 30000L
 ): Result<ByteArray> {
-    return runCatching { call(target, routeKey, requestPayload, payloadType, timeoutMs) }
+    return runCatching { call(routeKey, requestPayload, payloadType, timeoutMs) }
 }
 
 /** Discover actors and wrap the result. */

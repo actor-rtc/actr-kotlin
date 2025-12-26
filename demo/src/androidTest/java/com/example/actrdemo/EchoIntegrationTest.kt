@@ -97,8 +97,6 @@ class EchoIntegrationTest {
         // Server ID discovered in onStart, used in dispatch
         private var echoServerId: ActrId? = null
 
-        override suspend fun serverId(): ActrId = selfId
-
         override suspend fun onStart(ctx: ContextBridge) {
             Log.i(TAG, "RpcTestWorkload.onStart: Starting...")
 
@@ -168,11 +166,9 @@ class EchoIntegrationTest {
             // Send RPC via ActrRef.call() - this triggers the dispatch() method
             Log.i(TAG, "📞 Sending RPC via ActrRef.call()...")
             val requestPayload = encodeEchoRequest(testMessage)
-            val selfId = clientRef.actorId()
 
             val responsePayload =
                     clientRef.call(
-                            selfId,
                             "echo.EchoService.Echo",
                             PayloadType.RPC_RELIABLE,
                             requestPayload,
@@ -401,11 +397,9 @@ class EchoIntegrationTest {
                     local_file.File.SendFileRequest.newBuilder()
                             .setFilename("android-test.txt")
                             .build()
-            val selfId = clientRef.actorId()
 
             val responsePayload =
                     clientRef.call(
-                            selfId,
                             "local_file.LocalFileService.SendFile",
                             PayloadType.RPC_RELIABLE,
                             request.toByteArray(),

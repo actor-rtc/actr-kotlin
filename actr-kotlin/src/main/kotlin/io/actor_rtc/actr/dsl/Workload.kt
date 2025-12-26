@@ -106,17 +106,6 @@ open class SimpleWorkload(
         dataStreamChannel.send(DataStreamRequest(target, dataStream))
     }
 
-    override suspend fun serverId(): ActrId {
-        // Return the target server ID if set, otherwise return a placeholder
-        // (RPC calls will fail if target is not set)
-        return targetServerId.get()
-                ?: ActrId(
-                        realm = Realm(realmId = realmId),
-                        serialNumber = 0uL, // Placeholder - will cause ACL error if used
-                        type = type
-                )
-    }
-
     override suspend fun onStart(ctx: ContextBridge) {
         // Start a coroutine to handle DataStream requests
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Default).launch {
@@ -283,16 +272,6 @@ abstract class RoutedWorkload(private val realmId: UInt, private val type: ActrT
     /** Get the current target server ID, or null if not set. */
     fun getTargetServerId(): ActrId? {
         return targetServerId.get()
-    }
-
-    override suspend fun serverId(): ActrId {
-        // Return the target server ID if set, otherwise return a placeholder
-        return targetServerId.get()
-                ?: ActrId(
-                        realm = Realm(realmId = realmId),
-                        serialNumber = 0uL, // Placeholder - will cause ACL error if used
-                        type = type
-                )
     }
 
     /** Called when the workload starts. Override to add custom logic. */

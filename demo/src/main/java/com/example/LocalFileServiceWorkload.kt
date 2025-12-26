@@ -52,8 +52,6 @@ class LocalFileServiceWorkload(
                     type = ActrType(manufacturer = "acme", name = "LocalFileService")
             )
 
-    override suspend fun serverId(): ActrId = selfId
-
     override suspend fun onStart(ctx: ContextBridge) {
         Log.i(TAG, "LocalFileServiceWorkload.onStart")
         // 可以在这里预热缓存，发现远程服务等
