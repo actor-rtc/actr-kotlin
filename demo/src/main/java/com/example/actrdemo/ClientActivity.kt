@@ -1,14 +1,29 @@
 package com.example.actrdemo
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import echo.Echo.EchoRequest
+import echo.Echo.EchoResponse
+import io.actor_rtc.actr.PayloadType
+import io.actor_rtc.actr.dsl.*
 import io.actorrtc.demo.R
+import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ClientActivity : AppCompatActivity() {
+
+    companion object {
+        private const val TAG = "ClientActivity"
+    }
 
     private lateinit var statusText: TextView
     private lateinit var connectButton: Button
@@ -18,11 +33,20 @@ class ClientActivity : AppCompatActivity() {
     private lateinit var logText: TextView
     private lateinit var scrollView: ScrollView
 
+    // Actor-RTC components
+    private var clientRef: ActrRef? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_client)
 
-        // Initialize views
+        initViews()
+        setupClickListeners()
+
+        log("Ready to connect to Echo server")
+    }
+
+    private fun initViews() {
         statusText = findViewById(R.id.statusText)
         connectButton = findViewById(R.id.connectButton)
         disconnectButton = findViewById(R.id.disconnectButton)
@@ -30,38 +54,140 @@ class ClientActivity : AppCompatActivity() {
         sendButton = findViewById(R.id.sendButton)
         logText = findViewById(R.id.logText)
         scrollView = findViewById(R.id.scrollView)
+    }
 
-        // Get signaling URL from intent
-        val signalingUrl =
-                intent.getStringExtra("signalingUrl") ?: "ws://10.0.2.2:8081/signaling/ws"
+    private fun setupClickListeners() {
+        connectButton.setOnClickListener { connect() }
 
-        // Set up button click listeners
-        connectButton.setOnClickListener {
-            statusText.text = "Status: Connecting..."
-            connectButton.isEnabled = false
-            disconnectButton.isEnabled = true
-            messageInput.isEnabled = true
-            sendButton.isEnabled = true
-            // TODO: Implement connection logic
+        disconnectButton.setOnClickListener { disconnect() }
+
+        sendButton.setOnClickListener { sendMessage() }
+    }
+
+    private fun copyAssetToInternalStorage(assetName: String): String {
+        val inputStream = assets.open(assetName)
+        val outputFile = File(filesDir, assetName)
+        outputFile.parentFile?.mkdirs()
+        inputStream.use { input ->
+            outputFile.outputStream().use { output -> input.copyTo(output) }
         }
+        return outputFile.absolutePath
+    }
 
-        disconnectButton.setOnClickListener {
-            statusText.text = "Status: Disconnecting..."
-            connectButton.isEnabled = true
-            disconnectButton.isEnabled = false
-            messageInput.isEnabled = false
-            sendButton.isEnabled = false
-            // TODO: Implement disconnection logic
-        }
+    private fun connect() {
+        updateStatus("Connecting...")
+        connectButton.isEnabled = false
 
-        sendButton.setOnClickListener {
-            val message = messageInput.text.toString()
-            if (message.isNotEmpty()) {
-                // TODO: Send message
-                log("Sent: $message")
-                messageInput.text.clear()
+        lifecycleScope.launch {
+            try {
+                // Copy config file from assets to internal storage
+                val configPath = copyAssetToInternalStorage("client-config.toml")
+                Log.i(TAG, "Config path: $configPath")
+
+                // Create ActrSystem
+                val clientSystem = createActrSystem(configPath)
+
+                // Create and start EchoClientWorkload
+                Log.i(TAG, "🚀 Starting EchoClient...")
+                val clientWorkload = EchoClientWorkload()
+                val clientNode = clientSystem.attach(clientWorkload)
+                clientRef = clientNode.start()
+                Log.i(TAG, "✅ Client started: ${clientRef?.actorId()?.serialNumber}")
+
+                // Wait for client to discover the server
+                delay(2000)
+
+                withContext(Dispatchers.Main) {
+                    updateStatus("Connected")
+                    disconnectButton.isEnabled = true
+                    messageInput.isEnabled = true
+                    sendButton.isEnabled = true
+                    log("Connected to Echo server")
+                    log("Client ID: ${clientRef?.actorId()?.serialNumber}")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Connection failed", e)
+                withContext(Dispatchers.Main) {
+                    updateStatus("Connection failed")
+                    connectButton.isEnabled = true
+                    log("Error: ${e.message}")
+                }
             }
         }
+    }
+
+    private fun disconnect() {
+        updateStatus("Disconnecting...")
+        disconnectButton.isEnabled = false
+        messageInput.isEnabled = false
+        sendButton.isEnabled = false
+
+        lifecycleScope.launch {
+            try {
+                // Shutdown the client
+                clientRef?.shutdown()
+                clientRef?.awaitShutdown()
+                clientRef = null
+
+                withContext(Dispatchers.Main) {
+                    updateStatus("Disconnected")
+                    connectButton.isEnabled = true
+                    log("Disconnected from Echo server")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Disconnect error", e)
+                withContext(Dispatchers.Main) {
+                    updateStatus("Disconnected")
+                    connectButton.isEnabled = true
+                    clientRef = null
+                    log("Disconnect error: ${e.message}")
+                }
+            }
+        }
+    }
+
+    private fun sendMessage() {
+        val message = messageInput.text.toString().trim()
+        if (message.isEmpty()) return
+
+        val ref = clientRef
+        if (ref == null) {
+            log("Error: Not connected")
+            return
+        }
+
+        messageInput.text.clear()
+        log("📤 Sending: $message")
+
+        lifecycleScope.launch {
+            try {
+                // Create EchoRequest using generated protobuf class
+                val request = EchoRequest.newBuilder().setMessage(message).build()
+
+                // Send RPC via ActrRef.call()
+                Log.i(TAG, "📞 Sending RPC via ActrRef.call()...")
+                val responsePayload =
+                        ref.call(
+                                "echo.EchoService.Echo",
+                                PayloadType.RPC_RELIABLE,
+                                request.toByteArray(),
+                                30000L
+                        )
+
+                // Parse response using generated protobuf class
+                val response = EchoResponse.parseFrom(responsePayload)
+                Log.i(TAG, "📬 Response: ${response.reply}")
+
+                withContext(Dispatchers.Main) { log("📥 Received: ${response.reply}") }
+            } catch (e: Exception) {
+                Log.e(TAG, "Send error", e)
+                withContext(Dispatchers.Main) { log("❌ Send error: ${e.message}") }
+            }
+        }
+    }
+
+    private fun updateStatus(status: String) {
+        statusText.text = "Status: $status"
     }
 
     private fun log(message: String) {
@@ -73,5 +199,18 @@ class ClientActivity : AppCompatActivity() {
 
         // Auto scroll to bottom
         scrollView.post { scrollView.fullScroll(ScrollView.FOCUS_DOWN) }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Clean up ActrRef
+        lifecycleScope.launch {
+            try {
+                clientRef?.shutdown()
+                clientRef?.awaitShutdown()
+            } catch (e: Exception) {
+                Log.w(TAG, "Error during cleanup: ${e.message}")
+            }
+        }
     }
 }

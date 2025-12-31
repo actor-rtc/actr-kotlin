@@ -21,6 +21,16 @@
             </intent-filter>
         </activity>
         
+        <activity
+            android:name="com.example.actrdemo.ClientActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ActrDemo" />
+            
+        <activity
+            android:name="com.example.actrdemo.ServerActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ActrDemo" />
+        
     </application>
 
 </manifest>

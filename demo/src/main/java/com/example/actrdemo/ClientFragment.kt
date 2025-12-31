@@ -151,7 +151,7 @@ class ClientFragment : Fragment() {
                 var echoFound = false
                 for (attempt in 1..5) {
                     try {
-                        echoServerId = echoClientRef?.discoverOne("acme:EchoService")
+                        echoServerId = echoClientRef?.discoverOne("acme+EchoService")
                         if (echoServerId != null) {
                             appendLog("✅ Found EchoService: ${echoServerId!!.toShortString()}")
                             echoClientWorkload?.setTargetServerId(echoServerId!!)

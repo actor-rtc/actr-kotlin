@@ -15,10 +15,10 @@ tags = ["dev", "example", "android"]
 [dependencies]
 
 [system.signaling]
-url = "ws://10.0.2.2:8081/signaling/ws"
+url = "ws://124.71.231.251:9080/signaling/ws"
 
 [system.deployment]
-realm = 2281844430
+realm = 2368266035
 
 [system.discovery]
 visible = false
@@ -31,14 +31,14 @@ tracing_service_name = "android-echo-client"
 
 [system.webrtc]
 force_relay = true
-stun_urls = ["stun:10.0.2.2:3478"]
-turn_urls = ["turn:10.0.2.2:3478"]
+stun_urls = ["stun:124.71.231.251:13478"]
+turn_urls = ["turn:124.71.231.251:13478"]
 
 # ACL configuration
 [acl]
 
 [[acl.rules]]
 permission = "allow"
-types = ["acme:EchoService", "acme:FileTransferService"]
+types = ["acme+EchoService", "acme+FileTransferService"]
 
 [scripts]

@@ -675,6 +675,8 @@ internal object IntegrityCheckingUniffiLib {
         uniffiCheckContractApiVersion(this)
         uniffiCheckApiChecksums(this)
     }
+    external fun uniffi_actr_checksum_func_init_logger(
+    ): Short
     external fun uniffi_actr_checksum_method_actrnodewrapper_start(
     ): Short
     external fun uniffi_actr_checksum_method_actrrefwrapper_actor_id(
@@ -777,6 +779,8 @@ internal object UniffiLib {
     external fun uniffi_actr_fn_free_dynamicworkload(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
     ): Unit
     external fun uniffi_actr_fn_init_callback_vtable_workloadbridge(`vtable`: UniffiVTableCallbackInterfaceWorkloadBridge,
+    ): Unit
+    external fun uniffi_actr_fn_func_init_logger(uniffi_out_err: UniffiRustCallStatus, 
     ): Unit
     external fun ffi_actr_rustbuffer_alloc(`size`: Long,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
@@ -897,6 +901,9 @@ private fun uniffiCheckContractApiVersion(lib: IntegrityCheckingUniffiLib) {
 }
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
+    if (lib.uniffi_actr_checksum_func_init_logger() != 27630.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_actr_checksum_method_actrnodewrapper_start() != 60143.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -3868,5 +3875,14 @@ public object FfiConverterSequenceTypeMetadataEntry: FfiConverterRustBuffer<List
 
 
 
+ fun `initLogger`()
+        = 
+    uniffiRustCall() { _status ->
+    UniffiLib.uniffi_actr_fn_func_init_logger(
+    
+        _status)
+}
+    
+    
 
 

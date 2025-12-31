@@ -12,6 +12,7 @@ import io.actor_rtc.actr.Realm
 import io.actor_rtc.actr.RpcEnvelopeBridge
 import io.actor_rtc.actr.WorkloadBridge
 import io.actor_rtc.actr.dsl.*
+import io.actor_rtc.actr.initLogger
 import java.io.File
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -29,6 +30,14 @@ class EchoIntegrationTest {
         private const val REGISTRATION_DELAY_MS = 3000L
         private const val DISCOVERY_TIMEOUT_MS = 30000L
         private const val CALL_TIMEOUT_MS = 60000L
+
+        init {
+            try {
+                initLogger()
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to init logger: ${e.message}")
+            }
+        }
     }
 
     private fun getContext(): Context {
